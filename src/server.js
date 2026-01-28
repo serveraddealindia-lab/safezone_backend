@@ -77,7 +77,18 @@ const startServer = async () => {
     await sequelize.sync({ alter: true });
     console.log('Database tables synced successfully.');
     
-    // Start server
+    app.get('/api/products', async (req, res) => {
+      try {
+        const { Product } = require('./models');
+        const products = await Product.findAll();
+        res.status(200).json(products);
+      } catch (error) {
+        console.error('Products fetch error:', error);
+        res.status(500).json({ message: 'Failed to load products' });
+      }
+    });
+
+// Start server
     app.listen(PORT, () => {
       console.log(`Backend server running on port ${PORT}`);
     });
