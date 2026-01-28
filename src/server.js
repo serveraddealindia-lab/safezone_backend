@@ -21,7 +21,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://safezonefrontend.vercel.app/',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,6 +34,14 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.get('/', (req, res) => {
   res.send('SafeZone Backend is running 🚀');
+});
+
+app.get('/health', async (req, res) => {
+  try {
+    res.json({ status: 'OK', message: 'Backend running' });
+  } catch (e) {
+    res.status(500).json({ status: 'ERROR' });
+  }
 });
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
