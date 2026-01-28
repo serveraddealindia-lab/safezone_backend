@@ -13,6 +13,7 @@ const bannerRoutes = require('./routes/banner.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const careerRoutes = require('./routes/career.routes');
 const contactRoutes = require('./routes/contact.routes');
+const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const projectRoutes = require('./routes/project.routes');
 const { sequelize } = require('./models');
