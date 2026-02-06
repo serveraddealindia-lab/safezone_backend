@@ -1,42 +1,1 @@
-const { Market } = require('../models');
-
-const getAllMarkets = async () => {
-  return await Market.findAll({
-    order: [['id', 'ASC']]
-  });
-};
-
-const getMarketById = async (id) => {
-  return await Market.findByPk(id);
-};
-
-const createMarket = async (data) => {
-  return await Market.create(data);
-};
-
-const updateMarket = async (id, data) => {
-  const market = await Market.findByPk(id);
-  if (!market) {
-    return null;
-  }
-  await market.update(data);
-  return market;
-};
-
-const deleteMarket = async (id) => {
-  const market = await Market.findByPk(id);
-  if (!market) {
-    return false;
-  }
-  await market.destroy();
-  return true;
-};
-
-module.exports = {
-  getAllMarkets,
-  getMarketById,
-  createMarket,
-  updateMarket,
-  deleteMarket
-};
-
+潣獮⁴⁻慍歲瑥素㴠爠煥極敲✨⸮洯摯汥❳㬩਍਍潣獮⁴敧䅴汬慍歲瑥⁳‽獡湹⁣⤨㴠‾ൻ 爠瑥牵⁮睡楡⁴慍歲瑥昮湩䅤汬笨਍††牯敤㩲嬠❛摩Ⱗ✠十❃嵝਍†⥽഻紊഻ഊ挊湯瑳朠瑥慍歲瑥祂摉㴠愠祳据⠠摩 㸽笠਍†敲畴湲愠慷瑩䴠牡敫⹴楦摮祂歐椨⥤഻紊഻ഊ挊湯瑳挠敲瑡䵥牡敫⁴‽獡湹⁣搨瑡⥡㴠‾ൻ 爠瑥牵⁮睡楡⁴慍歲瑥挮敲瑡⡥慤慴㬩਍㭽਍਍潣獮⁴灵慤整慍歲瑥㴠愠祳据⠠摩‬慤慴 㸽笠਍†潣獮⁴慭歲瑥㴠愠慷瑩䴠牡敫⹴楦摮祂歐椨⥤഻ 椠⁦ℨ慭歲瑥 ൻ †爠瑥牵⁮畮汬഻ 素਍†睡楡⁴慭歲瑥甮摰瑡⡥慤慴㬩਍†敲畴湲洠牡敫㭴਍㭽਍਍潣獮⁴敤敬整慍歲瑥㴠愠祳据⠠摩 㸽笠਍†潣獮⁴慭歲瑥㴠愠慷瑩䴠牡敫⹴楦摮祂歐椨⥤഻ 椠⁦ℨ慭歲瑥 ൻ †爠瑥牵⁮慦獬㭥਍†ൽ 愠慷瑩洠牡敫⹴敤瑳潲⡹㬩਍†敲畴湲琠畲㭥਍㭽਍਍潭畤敬攮灸牯獴㴠笠਍†敧䅴汬慍歲瑥ⱳ਍†敧䵴牡敫䉴䥹Ɽ਍†牣慥整慍歲瑥ബ 甠摰瑡䵥牡敫ⱴ਍†敤敬整慍歲瑥਍㭽਍਍

@@ -1,43 +1,1 @@
-const { Career } = require('../models');
-
-const getAllCareers = async () => {
-  return await Career.findAll({
-    where: { is_active: true },
-    order: [['created_at', 'DESC']]
-  });
-};
-
-const getCareerById = async (id) => {
-  return await Career.findByPk(id);
-};
-
-const createCareer = async (data) => {
-  return await Career.create(data);
-};
-
-const updateCareer = async (id, data) => {
-  const career = await Career.findByPk(id);
-  if (!career) {
-    return null;
-  }
-  await career.update(data);
-  return career;
-};
-
-const deleteCareer = async (id) => {
-  const career = await Career.findByPk(id);
-  if (!career) {
-    return false;
-  }
-  await career.destroy();
-  return true;
-};
-
-module.exports = {
-  getAllCareers,
-  getCareerById,
-  createCareer,
-  updateCareer,
-  deleteCareer
-};
-
+潣獮⁴⁻慃敲牥素㴠爠煥極敲✨⸮洯摯汥❳㬩਍਍潣獮⁴敧䅴汬慃敲牥⁳‽獡湹⁣⤨㴠‾ൻ 爠瑥牵⁮睡楡⁴慃敲牥昮湩䅤汬笨਍††桷牥㩥笠椠彳捡楴敶›牴敵素ബ †漠摲牥›孛挧敲瑡摥慟❴‬䐧卅❃嵝਍†⥽഻紊഻ഊ挊湯瑳朠瑥慃敲牥祂摉㴠愠祳据⠠摩 㸽笠਍†敲畴湲愠慷瑩䌠牡敥⹲楦摮祂歐椨⥤഻紊഻ഊ挊湯瑳挠敲瑡䍥牡敥⁲‽獡湹⁣搨瑡⥡㴠‾ൻ 爠瑥牵⁮睡楡⁴慃敲牥挮敲瑡⡥慤慴㬩਍㭽਍਍潣獮⁴灵慤整慃敲牥㴠愠祳据⠠摩‬慤慴 㸽笠਍†潣獮⁴慣敲牥㴠愠慷瑩䌠牡敥⹲楦摮祂歐椨⥤഻ 椠⁦ℨ慣敲牥 ൻ †爠瑥牵⁮畮汬഻ 素਍†睡楡⁴慣敲牥甮摰瑡⡥慤慴㬩਍†敲畴湲挠牡敥㭲਍㭽਍਍潣獮⁴敤敬整慃敲牥㴠愠祳据⠠摩 㸽笠਍†潣獮⁴慣敲牥㴠愠慷瑩䌠牡敥⹲楦摮祂歐椨⥤഻ 椠⁦ℨ慣敲牥 ൻ †爠瑥牵⁮慦獬㭥਍†ൽ 愠慷瑩挠牡敥⹲敤瑳潲⡹㬩਍†敲畴湲琠畲㭥਍㭽਍਍潭畤敬攮灸牯獴㴠笠਍†敧䅴汬慃敲牥ⱳ਍†敧䍴牡敥䉲䥹Ɽ਍†牣慥整慃敲牥ബ 甠摰瑡䍥牡敥Ⱳ਍†敤敬整慃敲牥਍㭽਍਍

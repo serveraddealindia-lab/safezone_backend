@@ -1,123 +1,51 @@
-const projectService = require('../services/project.service');
+const { Project } = require('../models');
 
-const getAllProjects = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const projects = await projectService.getAllProjects();
-    res.status(200).json({ data: projects });
-  } catch (error) {
-    console.error('Get all projects error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const items = await Project.findAll({ order: [['id', 'DESC']] });
+    res.json(items);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const getProjectById = async (req, res) => {
+exports.getOne = async (req, res) => {
   try {
-    const { id } = req.params;
-    const project = await projectService.getProjectById(id);
-    
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    
-    res.status(200).json({ data: project });
-  } catch (error) {
-    console.error('Get project by id error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Project.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const createProject = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const projectData = req.body;
-    const project = await projectService.createProject(projectData);
-    
-    res.status(201).json({
-      message: 'Project created successfully',
-      data: project
-    });
-  } catch (error) {
-    console.error('Create project error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Project.create(req.body);
+    res.status(201).json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const updateProject = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updateData = req.body;
-    
-    const project = await projectService.updateProject(id, updateData);
-    
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    
-    res.status(200).json({
-      message: 'Project updated successfully',
-      data: project
-    });
-  } catch (error) {
-    console.error('Update project error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Project.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.update(req.body);
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const deleteProject = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await projectService.deleteProject(id);
-    
-    if (!result) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
-    
-    res.status(200).json({ message: 'Project deleted successfully' });
-  } catch (error) {
-    console.error('Delete project error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Project.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.destroy();
+    res.json({ message: 'Deleted' });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
-};
-
-const getProjectsByCountry = async (req, res) => {
-  try {
-    const { country } = req.params;
-    const projects = await projectService.getProjectsByCountry(country);
-    res.status(200).json({ data: projects });
-  } catch (error) {
-    console.error('Get projects by country error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const getProjectsByStatus = async (req, res) => {
-  try {
-    const { status } = req.params;
-    const projects = await projectService.getProjectsByStatus(status);
-    res.status(200).json({ data: projects });
-  } catch (error) {
-    console.error('Get projects by status error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const getProjectsByCategory = async (req, res) => {
-  try {
-    const { category } = req.params;
-    const projects = await projectService.getProjectsByCategory(category);
-    res.status(200).json({ data: projects });
-  } catch (error) {
-    console.error('Get projects by category error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-module.exports = {
-  getAllProjects,
-  getProjectById,
-  createProject,
-  updateProject,
-  deleteProject,
-  getProjectsByCountry,
-  getProjectsByStatus,
-  getProjectsByCategory
 };

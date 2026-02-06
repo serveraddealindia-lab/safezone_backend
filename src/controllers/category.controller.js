@@ -1,90 +1,51 @@
-const categoryService = require('../services/category.service');
+const { ProductCategory } = require('../models');
 
-const getAllCategories = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const categories = await categoryService.getAllCategories();
-    res.status(200).json(categories);
-  } catch (error) {
-    console.error('Get all categories error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const items = await ProductCategory.findAll({ order: [['name', 'ASC']] });
+    res.json(items);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const getCategoryById = async (req, res) => {
+exports.getOne = async (req, res) => {
   try {
-    const { id } = req.params;
-    const category = await categoryService.getCategoryById(id);
-    
-    if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
-    
-    res.status(200).json(category);
-  } catch (error) {
-    console.error('Get category by id error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ProductCategory.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const createCategory = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const { name } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
-    }
-    
-    const category = await categoryService.createCategory({ name });
-    res.status(201).json(category);
-  } catch (error) {
-    console.error('Create category error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ProductCategory.create(req.body);
+    res.status(201).json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const updateCategory = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
-    }
-    
-    const category = await categoryService.updateCategory(id, { name });
-    
-    if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
-    
-    res.status(200).json(category);
-  } catch (error) {
-    console.error('Update category error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ProductCategory.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.update(req.body);
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const deleteCategory = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await categoryService.deleteCategory(id);
-    
-    if (!deleted) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
-    
-    res.status(200).json({ message: 'Category deleted successfully' });
-  } catch (error) {
-    console.error('Delete category error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ProductCategory.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.destroy();
+    res.json({ message: 'Deleted' });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
-
-module.exports = {
-  getAllCategories,
-  getCategoryById,
-  createCategory,
-  updateCategory,
-  deleteCategory
-};
-

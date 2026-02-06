@@ -1,103 +1,52 @@
-const contactService = require('../services/contact.service');
+const { ContactLead } = require('../models');
 
-const createContactLead = async (req, res) => {
+exports.submit = async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
-    
-    if (!name || !email || !subject || !message) {
-      return res.status(400).json({ error: 'Name, email, subject, and message are required' });
-    }
-    
-    const contactLead = await contactService.createContactLead({
-      name,
-      email,
-      phone,
-      subject,
-      message
-    });
-    
-    res.status(201).json({
-      message: 'Contact form submitted successfully',
-      id: contactLead.id
-    });
-  } catch (error) {
-    console.error('Create contact lead error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const lead = await ContactLead.create({ name, email, phone, subject, message });
+    res.status(201).json({ message: 'Thank you. We will contact you soon.', id: lead.id });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const getAllContactLeads = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const contactLeads = await contactService.getAllContactLeads();
-    res.status(200).json({ data: contactLeads });
-  } catch (error) {
-    console.error('Get all contact leads error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const items = await ContactLead.findAll({ order: [['id', 'DESC']] });
+    res.json(items);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const getContactLeadById = async (req, res) => {
+exports.getOne = async (req, res) => {
   try {
-    const { id } = req.params;
-    const contactLead = await contactService.getContactLeadById(id);
-    
-    if (!contactLead) {
-      return res.status(404).json({ error: 'Contact lead not found' });
-    }
-    
-    res.status(200).json({ data: contactLead });
-  } catch (error) {
-    console.error('Get contact lead by id error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ContactLead.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const updateContactLeadStatus = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-    
-    if (!['new', 'contacted', 'resolved'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
-    
-    const contactLead = await contactService.updateContactLeadStatus(id, status);
-    
-    if (!contactLead) {
-      return res.status(404).json({ error: 'Contact lead not found' });
-    }
-    
-    res.status(200).json({
-      message: 'Contact lead status updated successfully',
-      data: contactLead
-    });
-  } catch (error) {
-    console.error('Update contact lead status error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ContactLead.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.update(req.body);
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const deleteContactLead = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await contactService.deleteContactLead(id);
-    
-    if (!result) {
-      return res.status(404).json({ error: 'Contact lead not found' });
-    }
-    
-    res.status(200).json({ message: 'Contact lead deleted successfully' });
-  } catch (error) {
-    console.error('Delete contact lead error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await ContactLead.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.destroy();
+    res.json({ message: 'Deleted' });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
-
-module.exports = {
-  createContactLead,
-  getAllContactLeads,
-  getContactLeadById,
-  updateContactLeadStatus,
-  deleteContactLead
-};
-

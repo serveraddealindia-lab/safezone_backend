@@ -9,16 +9,8 @@ const Career = require('./Career');
 const ContactLead = require('./ContactLead');
 const Project = require('./Project');
 
-// Define associations
-Product.belongsTo(ProductCategory, {
-  foreignKey: 'category_id',
-  as: 'category'
-});
-
-ProductCategory.hasMany(Product, {
-  foreignKey: 'category_id',
-  as: 'products'
-});
+Product.belongsTo(ProductCategory, { foreignKey: 'category_id', as: 'category' });
+ProductCategory.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
 
 module.exports = {
   sequelize,
@@ -32,4 +24,3 @@ module.exports = {
   ContactLead,
   Project
 };
-

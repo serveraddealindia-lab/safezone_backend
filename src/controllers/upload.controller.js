@@ -1,51 +1,23 @@
 const path = require('path');
+const upload = require('../config/multer.config');
 
-const uploadImage = (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No image file provided' });
-    }
+const uploadSingle = upload.single('file');
 
-    // Construct the file URL
-    const fileUrl = `/uploads/images/${req.file.filename}`;
-    
-    res.status(200).json({
-      message: 'Image uploaded successfully',
-      url: fileUrl,
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size
-    });
-  } catch (error) {
-    console.error('Image upload error:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
-  }
+exports.uploadImage = (req, res) => {
+  uploadSingle(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'No file' });
+    const url = '/uploads/' + req.file.filename;
+    res.json({ url, filename: req.file.filename });
+  });
 };
 
-const uploadPDF = (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No PDF file provided' });
-    }
-
-    // Construct the file URL
-    const fileUrl = `/uploads/pdfs/${req.file.filename}`;
-    
-    res.status(200).json({
-      message: 'PDF uploaded successfully',
-      url: fileUrl,
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size
-    });
-  } catch (error) {
-    console.error('PDF upload error:', error);
-    res.status(500).json({ error: 'Failed to upload PDF' });
-  }
+exports.uploadPdf = (req, res) => {
+  const pdfUpload = upload.single('file');
+  pdfUpload(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'No file' });
+    const url = '/uploads/' + req.file.filename;
+    res.json({ url, filename: req.file.filename });
+  });
 };
-
-module.exports = {
-  uploadImage,
-  uploadPDF
-};
-

@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const contactController = require('../controllers/contact.controller');
+const controller = require('../controllers/contact.controller');
 const { verifyToken, verifyAdminRole } = require('../middleware/auth.middleware');
 
-// Public route
-router.post('/', contactController.createContactLead);
-
-// Admin routes
-router.get('/', verifyToken, verifyAdminRole, contactController.getAllContactLeads);
-router.get('/:id', verifyToken, verifyAdminRole, contactController.getContactLeadById);
-router.put('/:id', verifyToken, verifyAdminRole, contactController.updateContactLeadStatus);
-router.delete('/:id', verifyToken, verifyAdminRole, contactController.deleteContactLead);
+router.post('/', controller.submit);
+router.get('/', verifyToken, verifyAdminRole, controller.getAll);
+router.get('/:id', verifyToken, verifyAdminRole, controller.getOne);
+router.put('/:id', verifyToken, verifyAdminRole, controller.update);
+router.delete('/:id', verifyToken, verifyAdminRole, controller.delete);
 
 module.exports = router;
-

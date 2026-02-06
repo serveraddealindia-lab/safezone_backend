@@ -1,8 +1,7 @@
-const checkHealth = (req, res) => {
-  res.status(200).json({ status: 'ok' });
+exports.checkHealth = async (req, res) => {
+  try {
+    res.json({ status: 'ok' });
+  } catch (e) {
+    res.status(500).json({ status: 'ERROR' });
+  }
 };
-
-module.exports = {
-  checkHealth
-};
-

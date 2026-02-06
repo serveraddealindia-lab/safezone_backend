@@ -1,42 +1,1 @@
-const { Service } = require('../models');
-
-const getAllServices = async () => {
-  return await Service.findAll({
-    order: [['id', 'ASC']]
-  });
-};
-
-const getServiceById = async (id) => {
-  return await Service.findByPk(id);
-};
-
-const createService = async (data) => {
-  return await Service.create(data);
-};
-
-const updateService = async (id, data) => {
-  const service = await Service.findByPk(id);
-  if (!service) {
-    return null;
-  }
-  await service.update(data);
-  return service;
-};
-
-const deleteService = async (id) => {
-  const service = await Service.findByPk(id);
-  if (!service) {
-    return false;
-  }
-  await service.destroy();
-  return true;
-};
-
-module.exports = {
-  getAllServices,
-  getServiceById,
-  createService,
-  updateService,
-  deleteService
-};
-
+潣獮⁴⁻敓癲捩⁥⁽‽敲畱物⡥⸧⼮潭敤獬⤧഻ഊ挊湯瑳朠瑥汁卬牥楶散⁳‽獡湹⁣⤨㴠‾ൻ 爠瑥牵⁮睡楡⁴敓癲捩⹥楦摮汁⡬ൻ †漠摲牥›孛椧❤‬䄧䍓崧൝ 素㬩਍㭽਍਍潣獮⁴敧却牥楶散祂摉㴠愠祳据⠠摩 㸽笠਍†敲畴湲愠慷瑩匠牥楶散昮湩䉤偹⡫摩㬩਍㭽਍਍潣獮⁴牣慥整敓癲捩⁥‽獡湹⁣搨瑡⥡㴠‾ൻ 爠瑥牵⁮睡楡⁴敓癲捩⹥牣慥整搨瑡⥡഻紊഻ഊ挊湯瑳甠摰瑡卥牥楶散㴠愠祳据⠠摩‬慤慴 㸽笠਍†潣獮⁴敳癲捩⁥‽睡楡⁴敓癲捩⹥楦摮祂歐椨⥤഻ 椠⁦ℨ敳癲捩⥥笠਍††敲畴湲渠汵㭬਍†ൽ 愠慷瑩猠牥楶散甮摰瑡⡥慤慴㬩਍†敲畴湲猠牥楶散഻紊഻ഊ挊湯瑳搠汥瑥卥牥楶散㴠愠祳据⠠摩 㸽笠਍†潣獮⁴敳癲捩⁥‽睡楡⁴敓癲捩⹥楦摮祂歐椨⥤഻ 椠⁦ℨ敳癲捩⥥笠਍††敲畴湲映污敳഻ 素਍†睡楡⁴敳癲捩⹥敤瑳潲⡹㬩਍†敲畴湲琠畲㭥਍㭽਍਍潭畤敬攮灸牯獴㴠笠਍†敧䅴汬敓癲捩獥ബ 朠瑥敓癲捩䉥䥹Ɽ਍†牣慥整敓癲捩ⱥ਍†灵慤整敓癲捩ⱥ਍†敤敬整敓癲捩൥紊഻ഊ

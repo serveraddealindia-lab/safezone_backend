@@ -1,94 +1,51 @@
-const serviceService = require('../services/service.service');
+const { Service } = require('../models');
 
-const getAllServices = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const services = await serviceService.getAllServices();
-    res.status(200).json(services);
-  } catch (error) {
-    console.error('Get all services error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const items = await Service.findAll({ order: [['name', 'ASC']] });
+    res.json(items);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const getServiceById = async (req, res) => {
+exports.getOne = async (req, res) => {
   try {
-    const { id } = req.params;
-    const service = await serviceService.getServiceById(id);
-    
-    if (!service) {
-      return res.status(404).json({ error: 'Service not found' });
-    }
-    
-    res.status(200).json(service);
-  } catch (error) {
-    console.error('Get service by id error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Service.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const createService = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const { name, description, icon } = req.body;
-    const image = req.file ? req.file.filename : null;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
-    }
-    
-    const service = await serviceService.createService({ name, description, icon, image });
-    res.status(201).json(service);
-  } catch (error) {
-    console.error('Create service error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Service.create(req.body);
+    res.status(201).json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const updateService = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, description, icon } = req.body;
-    const image = req.file ? req.file.filename : null;
-    
-    const updateData = {};
-    if (name !== undefined) updateData.name = name;
-    if (description !== undefined) updateData.description = description;
-    if (icon !== undefined) updateData.icon = icon;
-    if (image) updateData.image = image;
-    
-    const service = await serviceService.updateService(id, updateData);
-    
-    if (!service) {
-      return res.status(404).json({ error: 'Service not found' });
-    }
-    
-    res.status(200).json(service);
-  } catch (error) {
-    console.error('Update service error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Service.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.update(req.body);
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const deleteService = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await serviceService.deleteService(id);
-    
-    if (!deleted) {
-      return res.status(404).json({ error: 'Service not found' });
-    }
-    
-    res.status(200).json({ message: 'Service deleted successfully' });
-  } catch (error) {
-    console.error('Delete service error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const item = await Service.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    await item.destroy();
+    res.json({ message: 'Deleted' });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
-
-module.exports = {
-  getAllServices,
-  getServiceById,
-  createService,
-  updateService,
-  deleteService
-};
-

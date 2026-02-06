@@ -1,39 +1,1 @@
-const { ContactLead } = require('../models');
-
-const createContactLead = async (data) => {
-  return await ContactLead.create(data);
-};
-
-const getAllContactLeads = async () => {
-  return await ContactLead.findAll({
-    order: [['created_at', 'DESC']]
-  });
-};
-
-const getContactLeadById = async (id) => {
-  return await ContactLead.findByPk(id);
-};
-
-const updateContactLeadStatus = async (id, status) => {
-  const contactLead = await ContactLead.findByPk(id);
-  if (!contactLead) return null;
-  
-  return await contactLead.update({ status });
-};
-
-const deleteContactLead = async (id) => {
-  const contactLead = await ContactLead.findByPk(id);
-  if (!contactLead) return false;
-  
-  await contactLead.destroy();
-  return true;
-};
-
-module.exports = {
-  createContactLead,
-  getAllContactLeads,
-  getContactLeadById,
-  updateContactLeadStatus,
-  deleteContactLead
-};
-
+潣獮⁴⁻潃瑮捡䱴慥⁤⁽‽敲畱物⡥⸧⼮潭敤獬⤧഻ഊ挊湯瑳挠敲瑡䍥湯慴瑣敌摡㴠愠祳据⠠慤慴 㸽笠਍†敲畴湲愠慷瑩䌠湯慴瑣敌摡挮敲瑡⡥慤慴㬩਍㭽਍਍潣獮⁴敧䅴汬潃瑮捡䱴慥獤㴠愠祳据⠠ 㸽笠਍†敲畴湲愠慷瑩䌠湯慴瑣敌摡昮湩䅤汬笨਍††牯敤㩲嬠❛牣慥整彤瑡Ⱗ✠䕄䍓崧൝ 素㬩਍㭽਍਍潣獮⁴敧䍴湯慴瑣敌摡祂摉㴠愠祳据⠠摩 㸽笠਍†敲畴湲愠慷瑩䌠湯慴瑣敌摡昮湩䉤偹⡫摩㬩਍㭽਍਍潣獮⁴灵慤整潃瑮捡䱴慥卤慴畴⁳‽獡湹⁣椨Ɽ猠慴畴⥳㴠‾ൻ 挠湯瑳挠湯慴瑣敌摡㴠愠慷瑩䌠湯慴瑣敌摡昮湩䉤偹⡫摩㬩਍†晩⠠挡湯慴瑣敌摡 敲畴湲渠汵㭬਍†਍†敲畴湲愠慷瑩挠湯慴瑣敌摡甮摰瑡⡥⁻瑳瑡獵素㬩਍㭽਍਍潣獮⁴敤敬整潃瑮捡䱴慥⁤‽獡湹⁣椨⥤㴠‾ൻ 挠湯瑳挠湯慴瑣敌摡㴠愠慷瑩䌠湯慴瑣敌摡昮湩䉤偹⡫摩㬩਍†晩⠠挡湯慴瑣敌摡 敲畴湲映污敳഻ ഠ 愠慷瑩挠湯慴瑣敌摡搮獥牴祯⤨഻ 爠瑥牵⁮牴敵഻紊഻ഊ洊摯汵⹥硥潰瑲⁳‽ൻ 挠敲瑡䍥湯慴瑣敌摡ബ 朠瑥汁䍬湯慴瑣敌摡ⱳ਍†敧䍴湯慴瑣敌摡祂摉ബ 甠摰瑡䍥湯慴瑣敌摡瑓瑡獵ബ 搠汥瑥䍥湯慴瑣敌摡਍㭽਍਍

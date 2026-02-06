@@ -1,135 +1,173 @@
-const productService = require('../services/product.service');
+const { Product, ProductCategory } = require('../models');
+const path = require('path');
+const fs = require('fs');
+const upload = require('../config/multer.config');
 
-const getAllProducts = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const products = await productService.getAllProducts();
-    res.status(200).json(products);
-  } catch (error) {
-    console.error('Get all products error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const getProductById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await productService.getProductById(id);
-    
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-    
-    res.status(200).json(product);
-  } catch (error) {
-    console.error('Get product by id error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const createProduct = async (req, res) => {
-  try {
-    const { category_id, name, short_desc, long_desc, pdf, datasheet } = req.body;
-    const image = req.file ? req.file.filename : null;
-    
-    if (!category_id || !name) {
-      return res.status(400).json({ error: 'Category ID and name are required' });
-    }
-    
-    const product = await productService.createProduct({
-      category_id,
-      name,
-      short_desc,
-      long_desc,
-      image,
-      pdf,
-      datasheet
+    const where = {};
+    if (req.query.category_id) where.category_id = req.query.category_id;
+    const items = await Product.findAll({
+      where,
+      include: [{ model: ProductCategory, as: 'category', attributes: ['id', 'name'] }],
+      order: [['id', 'ASC']]
     });
-    
-    res.status(201).json(product);
-  } catch (error) {
-    console.error('Create product error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.json(items);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-const updateProduct = async (req, res) => {
+exports.getOne = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { category_id, name, short_desc, long_desc, pdf, datasheet } = req.body;
-    const image = req.file ? req.file.filename : null;
-    
-    const updateData = {};
-    if (category_id !== undefined) updateData.category_id = category_id;
-    if (name !== undefined) updateData.name = name;
-    if (short_desc !== undefined) updateData.short_desc = short_desc;
-    if (long_desc !== undefined) updateData.long_desc = long_desc;
-    if (image) updateData.image = image;
-    if (pdf !== undefined) updateData.pdf = pdf;
-    if (datasheet !== undefined) updateData.datasheet = datasheet;
-    
-    const product = await productService.updateProduct(id, updateData);
-    
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-    
-    res.status(200).json(product);
-  } catch (error) {
-    console.error('Update product error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const deleteProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleted = await productService.deleteProduct(id);
-    
-    if (!deleted) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-    
-    res.status(200).json({ message: 'Product deleted successfully' });
-  } catch (error) {
-    console.error('Delete product error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-const uploadDatasheet = async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-    
-    // Construct the file URL
-    const datasheetUrl = `${req.protocol}://${req.get('host')}/uploads/datasheets/${req.file.filename}`;
-    
-    // Update product with datasheet URL
-    const product = await productService.updateProduct(id, { datasheet: datasheetUrl });
-    
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-    
-    res.status(200).json({
-      message: 'Datasheet uploaded successfully',
-      datasheet: datasheetUrl
+    const item = await Product.findByPk(req.params.id, {
+      include: [{ model: ProductCategory, as: 'category', attributes: ['id', 'name'] }]
     });
-  } catch (error) {
-    console.error('Upload datasheet error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
   }
 };
 
-module.exports = {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  uploadDatasheet
+exports.create = async (req, res) => {
+  try {
+    // Handle file uploads
+    const uploadFields = upload.fields([
+      { name: 'image', maxCount: 1 },
+      { name: 'pdf', maxCount: 1 },
+      { name: 'datasheet', maxCount: 1 }
+    ]);
+    
+    uploadFields(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      
+      try {
+        const productData = { ...req.body };
+        
+        // Handle uploaded files
+        if (req.files) {
+          if (req.files.image && req.files.image[0]) {
+            productData.image = req.files.image[0].filename;
+          }
+          if (req.files.pdf && req.files.pdf[0]) {
+            productData.pdf = req.files.pdf[0].filename;
+          }
+          if (req.files.datasheet && req.files.datasheet[0]) {
+            productData.datasheet = req.files.datasheet[0].filename;
+          }
+        }
+        
+        const item = await Product.create(productData);
+        res.status(201).json(item);
+      } catch (e) {
+        res.status(500).json({ message: e.message });
+      }
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
 };
 
+exports.update = async (req, res) => {
+  try {
+    const item = await Product.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    
+    // Handle file uploads
+    const uploadFields = upload.fields([
+      { name: 'image', maxCount: 1 },
+      { name: 'pdf', maxCount: 1 },
+      { name: 'datasheet', maxCount: 1 }
+    ]);
+    
+    uploadFields(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      
+      try {
+        const productData = { ...req.body };
+        
+        // Handle uploaded files
+        if (req.files) {
+          if (req.files.image && req.files.image[0]) {
+            // Delete old image if exists
+            if (item.image) {
+              const oldImagePath = path.join(__dirname, '../../uploads', item.image);
+              if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+              }
+            }
+            productData.image = req.files.image[0].filename;
+          }
+          if (req.files.pdf && req.files.pdf[0]) {
+            // Delete old pdf if exists
+            if (item.pdf) {
+              const oldPdfPath = path.join(__dirname, '../../uploads', item.pdf);
+              if (fs.existsSync(oldPdfPath)) {
+                fs.unlinkSync(oldPdfPath);
+              }
+            }
+            productData.pdf = req.files.pdf[0].filename;
+          }
+          if (req.files.datasheet && req.files.datasheet[0]) {
+            // Delete old datasheet if exists
+            if (item.datasheet) {
+              const oldDatasheetPath = path.join(__dirname, '../../uploads', item.datasheet);
+              if (fs.existsSync(oldDatasheetPath)) {
+                fs.unlinkSync(oldDatasheetPath);
+              }
+            }
+            productData.datasheet = req.files.datasheet[0].filename;
+          }
+        }
+        
+        await item.update(productData);
+        res.json(item);
+      } catch (e) {
+        res.status(500).json({ message: e.message });
+      }
+    });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const item = await Product.findByPk(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    
+    // Delete associated files
+    const uploadPath = path.join(__dirname, '../../uploads');
+    
+    if (item.image) {
+      const imagePath = path.join(uploadPath, item.image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+    
+    if (item.pdf) {
+      const pdfPath = path.join(uploadPath, item.pdf);
+      if (fs.existsSync(pdfPath)) {
+        fs.unlinkSync(pdfPath);
+      }
+    }
+    
+    if (item.datasheet) {
+      const datasheetPath = path.join(uploadPath, item.datasheet);
+      if (fs.existsSync(datasheetPath)) {
+        fs.unlinkSync(datasheetPath);
+      }
+    }
+    
+    await item.destroy();
+    res.json({ message: 'Deleted' });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
