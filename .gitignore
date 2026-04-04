@@ -6,4 +6,5 @@ uploads/pdfs/*
 !uploads/.gitkeep
 !uploads/images/.gitkeep
 !uploads/pdfs/.gitkeep
+uploads/
 
