@@ -19,12 +19,22 @@ const sequelize = new Sequelize(
     dialectOptions: {
       decimalNumbers: true,
       dateStrings: true,
-      typeCast: true
+      typeCast: true,
+      // Add SSL support for remote connections (required by many cloud DB providers)
+      ssl: process.env.NODE_ENV === 'production' ? {
+        require: true,
+        rejectUnauthorized: false
+      } : false
     },
     define: {
       timestamps: true,
       createdAt: 'createdAt',
       updatedAt: 'updatedAt'
+    },
+    // Add retry logic for connection failures
+    retry: {
+      max: 3,
+      timeout: 30000
     }
   }
 );
