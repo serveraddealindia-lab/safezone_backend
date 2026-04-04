@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? 'https://safezonefrontend.vercel.app'
+    ? 'https://safezonefronte.vercel.app'
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 };
