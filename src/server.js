@@ -22,13 +22,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://safezonefronte.vercel.app'
-    : ['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
-};
-app.use(cors(corsOptions));
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -116,7 +111,7 @@ app.use((error, req, res, next) => {
 // Sync database and start server
 const startServer = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    // await sequelize.sync({ alter: true });
     console.log('Database tables synced successfully.');
     app.listen(PORT, () => {
       console.log('Backend server running on port', PORT);
